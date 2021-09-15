@@ -56,11 +56,11 @@ public class StudentController
    @Transactional
    public Student setStudentReg(@RequestParam String email, @RequestBody int stsCode) {
       Student student = studentRepository.findByEmail(email);
-      if(student != null) {
-         student.setStatusCode(stsCode);
-         return studentRepository.save(student);
-      } else {
+      if(student == null) {
          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Studnet doesn't exists.");
       }
+      student.setStatusCode(stsCode);
+      return studentRepository.save(student);
+      
    }
 }
