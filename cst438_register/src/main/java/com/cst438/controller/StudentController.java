@@ -17,6 +17,7 @@ import com.cst438.domain.Enrollment;
 import com.cst438.domain.EnrollmentDTO;
 import com.cst438.domain.EnrollmentRepository;
 import com.cst438.domain.ScheduleDTO;
+import com.cst438.domain.StudentDTO;
 import com.cst438.domain.Student;
 import com.cst438.domain.StudentRepository;
 import com.cst438.service.GradebookService;
@@ -39,27 +40,26 @@ public class StudentController
    
    @PostMapping("/student/add")
    @Transactional
-   public Student addStudent(@RequestParam String email, @RequestParam String name) {
+   public Student addStudent(@RequestBody StudentDTO studentDTO) {
       
-      Student studentExist = studentRepository.findByEmail(email);
-      if(studentExist != null) {
+      Student student = studentRepository.findByEmail(studentDTO.student_email);
+      if(student != null) {
          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Studnet already exists.");
       }         
-      Student student = new Student();
-      student.setEmail(email);
-      student.setName(name);
-      
-      return studentRepository.save(student);      
+      Student newStudent = new Student();
+      newStudent.setEmail(studentDTO.student_email);
+      newStudent.setName(studentDTO.student_name);        
+      return studentRepository.save(newStudent);      
    }
  
    @PostMapping("/student/status")
    @Transactional
-public Student setStudentReg(@RequestParam String email, @RequestBody int stsCode) {
-      Student student = studentRepository.findByEmail(email);
+   public Student setStudentReg(@RequestBody StudentDTO studentDTO) {
+      Student student = studentRepository.findByEmail(studentDTO.student_email);
       if(student == null) {
          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Studnet doesn't exists.");
       }
-      student.setStatusCode(stsCode);
+      student.setStatusCode(studentDTO.student_status);
       return studentRepository.save(student);
       
    }
