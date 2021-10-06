@@ -18,6 +18,8 @@ import com.cst438.domain.Course;
 import com.cst438.domain.CourseRepository;
 import com.cst438.domain.Enrollment;
 import com.cst438.domain.EnrollmentRepository;
+import com.cst438.domain.Student;
+import com.cst438.domain.StudentRepository;
 
 /*
  * This example shows how to use selenium testing using the web driver 
@@ -52,15 +54,18 @@ public class EndtoEndAddStudentTest {
 
    @Autowired
    CourseRepository courseRepository;
+   
+   @Autowired
+   StudentRepository studentRepository;
 
    @Test
-   public void addCourseTest() throws Exception {
+   public void addStudentTest() throws Exception {
 
-      Enrollment x = null;
+      Student x = null;
       do {
-         x = enrollmentRepository.findByEmailAndCourseId(TEST_USER_EMAIL, TEST_COURSE_ID);
+         x = studentRepository.findByEmail(TEST_USER_EMAIL);
          if (x != null)
-            enrollmentRepository.delete(x);
+            studentRepository.delete(x);
       } while (x != null);
 
       // set the driver location and start driver
@@ -87,13 +92,13 @@ public class EndtoEndAddStudentTest {
 //         we.click();
 
          // Locate and click "Add Student" button
-         driver.findElement(By.xpath("//button[@id='addStudent'")).click();
+         driver.findElement(By.xpath("//button[@id='addStudent']")).click();
          Thread.sleep(SLEEP_DURATION);
 
          //DELETE
          // Locate and click "Add Course" button
-         driver.findElement(By.xpath("//button")).click();
-         Thread.sleep(SLEEP_DURATION);
+//         driver.findElement(By.xpath("//button")).click();
+//         Thread.sleep(SLEEP_DURATION);
 
          // enter course no 40442 and click "Add"
          driver.findElement(By.xpath("//input[@name='student_name']")).sendKeys(TEST_USER_NAME);
@@ -102,22 +107,22 @@ public class EndtoEndAddStudentTest {
          Thread.sleep(SLEEP_DURATION);
 
          // verify that new course shows in schedule.
-         Course course = courseRepository.findById(TEST_COURSE_ID).get();
+    //     Student testStudent = courseRepository.findById(TEST_COURSE_ID).get();
 //        we = driver.findElement(By.xpath("//div[@data-field='title' and @data-value='" + course.getTitle() + "']"));
 //         assertNotNull(we, "Added course does not show in schedule.");
 
          // verify that enrollment row has been inserted to database.
-         Enrollment e = enrollmentRepository.findByEmailAndCourseId(TEST_USER_EMAIL, TEST_COURSE_ID);
-         assertNotNull(e, "Course enrollment not found in database.");
+         Student s = studentRepository.findByEmail(TEST_USER_EMAIL);
+         assertNotNull(s);
 
       } catch (Exception ex) {
          throw ex;
       } finally {
 
          // clean up database.
-         Enrollment e = enrollmentRepository.findByEmailAndCourseId(TEST_USER_EMAIL, TEST_COURSE_ID);
-         if (e != null)
-            enrollmentRepository.delete(e);
+         Student s = studentRepository.findByEmail(TEST_USER_EMAIL);
+         if (s != null)
+            studentRepository.delete(s);
 
          driver.quit();
       }
